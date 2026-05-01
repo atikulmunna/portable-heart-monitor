@@ -13,82 +13,120 @@ The objective of this project is to design and implement a **Portable Cardiac Mo
 ### Scope 
 This portable cardiac monitoring system is designed primarily for **home-based health monitoring** and **fitness tracking**, making it suitable for individuals looking to track their cardiovascular health in a non-clinical environment. It can be used by people with pre-existing heart conditions, fitness enthusiasts, or individuals at risk of cardiovascular disease, helping them stay proactive about their health. The system provides an accessible middle ground between **clinical-grade devices**, which are often costly and complex, and basic **consumer-grade health gadgets**, which may lack the necessary diagnostic accuracy. Moreover, this system offers a more affordable, real-time, and continuous solution for heart health management, addressing the limitations of traditional systems and expanding access to quality cardiac care.-->
 
-## System Overview
-### Components Used
-  *	**STM32F103C8T6 Microcontroller:** The core processing unit handling data acquisition and signal processing. </br>
-  *	**AD8232 ECG Sensor:** Measures electrical signals from the heart and provides analog output for real-time ECG monitoring.</br>
-  *	**MAX30102 Heart Rate/Spo2 Sensor:** Tracks heart rate and SpO2 using Infra-Red (IR) as a part of technique called photoplethysmography (PPG). </br>
-  *	**OLED Display (SSD1306):** Displays the ECG signal graph in real time.
+# IoT-Based Portable Cardiac Monitoring System
 
-### Features
-* Real-time ECG graph visualization.
-* Real-time Heart Rate and Oxygen Level Measure.
-* Compact and portable design.
-*	Cost-effective and easy to use.
+## System Overview
+This project is an advanced, IoT-enabled Portable Cardiac Monitoring System. Utilizing a dual-microcontroller architecture, it seamlessly captures, processes, and streams real-time biometric data. Users can interact with the system locally via a physical keypad and an OLED screen, or monitor their health remotely through a live cloud dashboard.
+
+### Components Used
+*   **STM32F103C8T6 Microcontroller:** The primary processing unit (the "Sensor Brain"). It handles high-speed data acquisition, filtering, and localized display rendering.
+*   **ESP8266 (NodeMCU):** The Wi-Fi gateway (the "Network Brain"). It receives processed JSON data from the STM32 via serial communication and publishes it to the cloud using MQTT.
+*   **4x4 Matrix Keypad:** Provides an interactive physical user interface, allowing patients or clinicians to instantly toggle between different diagnostic modes (Menu, ECG, BPM, SpO2).
+*   **AD8232 ECG Sensor:** Measures the heart's electrical activity and provides an analog output for real-time ECG waveform monitoring.
+*   **MAX30102 Pulse Oximeter:** Tracks heart rate and blood oxygen saturation (SpO2) using advanced photoplethysmography (PPG).
+*   **OLED Display (SSD1306):** Renders the user menu, real-time ECG waveforms, and vital statistics directly on the device.
+
+### Key Features
+*   **Multi-Mode UI:** Dynamic physical keypad navigation for selecting specific health metrics on demand.
+*   **Live Cloud Integration:** Real-time data streaming to a Ubidots IoT dashboard for remote patient monitoring.
+*   **Real-time ECG Visualization:** Continuous rendering of electrical heart activity.
+*   **Precise Vitals Tracking:** Live Heart Rate (BPM) and Oxygen Saturation (SpO2) calculations.
+*   **Dual-MCU Efficiency:** Separates sensor processing (STM32) from network handling (ESP8266) to prevent lag and ensure smooth hardware performance.
+
+---
+
+## IoT Cloud Dashboard (Ubidots)
+The system streams data over Wi-Fi directly to a Ubidots cloud dashboard, enabling remote monitoring from anywhere in the world. The dashboard features visual widgets including a live-scrolling ECG chart, a BPM gauge, and a SpO2 indicator.
+
+*(Add your mobile app or web dashboard screenshot below)*
+
+![Ubidots Mobile Dashboard Placeholder](Put_Your_Image_Link_Here) \
+*<p align="center">Figure 1: Live Ubidots Health Monitoring Dashboard</p>*
+
+---
 
 ## Pinout Diagram and Explanation
-### Pinout Diagram 
-![Picture1](https://github.com/user-attachments/assets/7e010855-c06b-47bf-b04d-ed42c032a4b6) \
-*<p align="center">Figure 1: STM32F1 Pinout Diagram</p>*
-![Picture2](https://github.com/user-attachments/assets/b32106bb-8288-48c0-9207-2085ced2355e) \
-*<p align="center">Figure 2: Pinout View of Project Components</p>*
+
+### Pinout Diagrams
+![STM32F1 Pinout Diagram](https://github.com/user-attachments/assets/7e010855-c06b-47bf-b04d-ed42c032a4b6) \
+*<p align="center">Figure 2: STM32F1 Pinout Diagram</p>*
+
+![Pinout View of Project Components](https://github.com/user-attachments/assets/b32106bb-8288-48c0-9207-2085ced2355e) \
+*<p align="center">Figure 3: Pinout View of Project Components</p>*
+
 ### Pin Connections
-| Component  | STM32F1 Pin |  Description |
-| ------------- | ------------- | ------------- |
-| MAX30102(SCL)  | PB6  | I2C Clock  |
-| MAX30102(SDA) | PB7  |  I2C Data  |
-| MAX30102(INT)  | PA1  | Interrupt Handling (Optional)  |
-| AD8232 (OUT)  | PA0  | Analog input to the ADC for ECG signals  |
-| OLED Display (SCL)  | PB6  | I2C Clock  |
-| OLED Display (SDA) | PB7  | I2C Data  |
-| Power (3.3V)  | 3.3  | Constant 3.3 Volt Supply  |
-| GND  | G  | Common Ground Point  |
+
+| Component | STM32F1 Pin | Description |
+| :--- | :--- | :--- |
+| **MAX30102 (SCL)** | PB6 | I2C Clock |
+| **MAX30102 (SDA)** | PB7 | I2C Data |
+| **MAX30102 (INT)** | PA1 | Interrupt Handling (Optional) |
+| **AD8232 (OUT)** | PA0 | Analog input to the ADC for ECG signals |
+| **OLED Display (SCL)** | PB6 | I2C Clock (Shared Bus) |
+| **OLED Display (SDA)** | PB7 | I2C Data (Shared Bus) |
+| **Keypad (Rows)** | PA7, PA6, PA5, PA4 | Digital inputs for matrix keypad rows |
+| **Keypad (Cols)** | PA3, PA2, PB0, PB1 | Digital inputs for matrix keypad columns |
+| **ESP8266 (RX)** | PA9 (TX) | Serial communication to transmit JSON data to Wi-Fi chip |
+| **Power (3.3V)** | 3.3V | Constant 3.3 Volt Supply (Isolated between MCUs) |
+| **GND** | GND | Common Ground Point across all components |
 
 ### Explanation
-The STM32F1 microcontroller interfaces with the AD8232 to acquire ECG signals via its ADC (PA0). The signals are processed and displayed as a real-time graph on the OLED display using I2C communication. And the MAX30102 interfaces with STM32F1 microcontroller to send Serial data specifically photoplethysmography data through SDA(PB7). The data is processed and displayed as a real-time Heart Rate/Oxygen Level on the OLED display using I2C communication. The OLED display is configured to provide a clear and intuitive visualization of the ECG waveform and Heart-Rate/Spo2.
+The system operates by delegating tasks. The **STM32F1** acts as the master sensor controller. It continuously polls the **AD8232** via its ADC (PA0) and the **MAX30102** via the I2C bus (PB6/PB7). Based on the mode selected by the user via the **Keypad**, the STM32 processes the relevant sensor data and pushes a localized visual to the **OLED**. Concurrently, the STM32 packages all live biometric data into a formatted JSON string and transmits it over Serial (TX: PA9) to the **ESP8266**, which acts as a dedicated MQTT modem, pushing the payload to the Ubidots cloud.
 
-### Project Diagram and Visual
+---
+
+## Project Diagram and Visual
+
 ### Block Diagram
-![Picture3](https://github.com/user-attachments/assets/0d1d4ec0-c5f7-472a-8946-ac1eaa22aa62)
-*<p align="center">Figure 3: Project Block Diagram</p>*
-### Project Visualization
-![Picture4](https://github.com/user-attachments/assets/acc53315-8f7e-497e-8e16-92e243f3af65)
-*<p align="center">Figure 4: Project Image</p>*
+![Project Block Diagram](https://github.com/user-attachments/assets/0d1d4ec0-c5f7-472a-8946-ac1eaa22aa62) \
+*<p align="center">Figure 4: Project Block Diagram</p>*
 
-### Methodology
+### Project Visualization
+![Project Image](https://github.com/user-attachments/assets/acc53315-8f7e-497e-8e16-92e243f3af65) \
+*<p align="center">Figure 5: Hardware Assembly</p>*
+
+---
+
+## Methodology
+
 ### Hardware Configuration
-* Connected AD8232 ECG sensor to the STM32F1 ADC (PA0).
-* Connecter MAX30102 Heart-Rate/Spo2 to the STM32F1 SCL(PB6), SDA(PB7).
-* Interfaced the OLED display using I2C SCL(PB6), SDA(PB7).
-* Common 3.3v and Ground connection
-* Used ST-Link V2 to Program STM32F1
+*   **Sensor Integration:** Connected the AD8232 ECG sensor to the STM32 ADC (PA0) and the MAX30102 to the shared I2C bus (PB6, PB7).
+*   **Display & UI:** Interfaced the SSD1306 OLED via I2C and wired a 4x4 matrix keypad to digital pins for menu navigation.
+*   **IoT Bridge:** Established a Serial TX/RX connection between the STM32 (PA9) and the ESP8266 (RX) with a common ground to ensure safe data transfer.
+*   **Power Management:** Ensured isolated 3.3V power routing to prevent voltage regulator conflicts between the STM32 and ESP8266.
+*   **Programming:** Utilized ST-Link V2 to flash the STM32F1 and standard USB serial to flash the ESP8266.
 
 ### Software Development
-* Used STM32CubeMX for Pinout View. (Optional)
-* Developed firmware in Arduino IDE using STM32F1 MCU based Boards.
-* Processed ECG signals, Heart-Rate/Spo2 in real time and displayed the waveform and Data on the OLED screen.
-* Used C programming Language to communicate among STM32F1, Sensors
-(MAX30102, AD8232) and OLED Display.
+*   **Firmware:** Developed in the Arduino IDE leveraging C/C++.
+*   **Optimization:** Utilized Link Time Optimization (LTO) to successfully compress multiple heavy libraries (U8g2, Keypad, MAX30105) into the STM32's flash memory.
+*   **Cloud Architecture:** Implemented `ArduinoJson` to serialize biometric data and `PubSubClient` on the ESP8266 to maintain a lightweight MQTT connection to the Ubidots API.
 
 ### Signal Processing
-* Filtered and amplified ECG signals using the AD8232 module.
-* Ensured real-time responsiveness for smooth waveform visualization.
-* Measured Infrared and Red-Light value from finger using MAX30102.
-* Ensured real-time responsiveness for approximate Heart Rate and Oxygen Level value.
+*   Filtered and amplified raw analog ECG signals for smooth, continuous line-chart rendering on both the OLED and the Ubidots dashboard.
+*   Measured Infrared (IR) and Red-Light absorption from the MAX30102, passing the raw values through a smoothing algorithm to stabilize BPM and SpO2 calculations.
 
-### Results Analysis and Discussion
-## Result Analysis
-* **ECG Data:** Successfully visualized real-time ECG signals on the OLED display.
-* **Challenges:** 
-  - Initial noise in ECG signals was mitigated by using appropriate filters.
-  - Ensuring smooth rendering of the ECG graph required careful tuning of data acquisition and display update rates.
-* **Heart-Rate/Spo2:** Successfully achieved real-time Heart Rate and Oxygen Level Value.
-* **Challenges:**
-  - Hardware internal voltage and noise from the achieved infrared and red-light was making it hard to measure the actual heart rate out of it.
-  - Ensuring real time appropriate Heart Rate value required smoothing the threshold value with proper algorithm and adjusting peak voltage.
+---
 
-## Discussion
-The design and implementation of the Portable Cardiac Monitoring System demonstrated a practical and cost-effective solution for real-time monitoring of ECG, heart rate, and oxygen saturation levels. By leveraging the **STM32F103C8 microcontroller** and key sensors such as the **AD8232** and **MAX30102**, the system achieved reliable data acquisition and visualization on an **OLED display**. Challenges encountered during the development process included noise interference in ECG signals and inaccuracies in heart rate and SpO2 measurements caused by ambient light and motion artifacts. These issues were mitigated using digital filtering techniques, calibration adjustments, and iterative tuning of the signal acquisition process. While these solutions significantly improved performance, further optimization is required to enhance consistency in dynamic and real-world environments. Another challenge was ensuring seamless synchronization between data acquisition and rendering. This required iterative refinement of software algorithms to enable smooth, real-time visualization. Despite these limitations, the project effectively highlights the viability of portable systems for continuous cardiac monitoring. The results emphasize the importance of further development in signal processing, hardware integration, and system reliability to enhance overall performance.
+## Results Analysis and Discussion
 
-### Conclusion
-This project successfully demonstrates the feasibility of a Portable Cardiac Monitoring System capable of real-time ECG visualization, heart rate monitoring, and oxygen saturation measurement. By addressing the limitations of traditional hospital-based monitoring systems such as their bulkiness, high costs, and limited accessibility this portable solution offers an affordable and user-friendly alternative suitable for both personal and clinical use. The implementation underscores the importance of accessible health monitoring systems in empowering individuals to manage their heart health proactively. This is particularly critical in resource-limited settings, where continuous monitoring can help reduce the risk of severe cardiovascular events and alleviate the burden on healthcare systems. Future enhancements could include integrating the ESP8266 Wi-Fi module to enable wireless connectivity and mobile application integration. This would allow users to monitor their health metrics remotely, generate detailed reports, and receive real-time alerts, significantly expanding the system's functionality. Additionally, advancements such as refining signal processing algorithms, incorporating machine learning for anomaly detection, and exploring wearability can further improve its diagnostic and preventive capabilities. These developments position this system as a valuable tool in modern healthcare, paving the way for accessible and efficient continuous cardiac monitoring.
+### Result Analysis
+*   **ECG Data:** Successfully visualized real-time ECG waveforms locally on the OLED and remotely via the Ubidots web/mobile interface.
+    *   *Challenges:* Initial noise in the analog signal was mitigated through appropriate hardware filtering, while rendering latency was solved by adjusting the refresh rate logic so as not to block the main loop.
+*   **Heart-Rate / SpO2:** Achieved reliable, real-time pulse and oxygen saturation readings.
+    *   *Challenges:* Dealing with ambient light interference and finger movement artifacts. This required establishing a dynamic threshold algorithm that constantly adjusts to the baseline IR light values before calculating the beats-per-minute.
+*   **IoT Synchronization:** Successfully passed data reliably between two microcontrollers.
+    *   *Challenges:* Preventing buffer overflows and serial desynchronization. Solved by standardizing the baud rate (115200), using strict JSON formatting, and implementing a non-blocking 3-second delay for cloud uploads.
+
+### Discussion
+The design and implementation of this system demonstrated a highly practical solution for continuous cardiac monitoring. By upgrading from a standalone device to a dual-MCU IoT architecture, the system overcomes the localized limitations of traditional monitors. The **STM32F103C8** proved highly capable of handling the strict timing requirements of the I2C sensors and OLED rendering, while offloading the heavy Wi-Fi protocols to the **ESP8266** ensured the system never froze or dropped frames while connecting to the internet. 
+
+Challenges encountered during development included minimizing electrical noise across the sensors and compressing the required codebase to fit within the STM32's memory constraints. These were mitigated using advanced IDE optimization flags, digital filtering techniques, and careful management of global variables.
+
+---
+
+## Conclusion
+This project successfully demonstrates the feasibility of an affordable, portable, and cloud-connected Cardiac Monitoring System. By addressing the limitations of traditional hospital-based equipment—such as bulkiness, high costs, and lack of remote accessibility—this solution empowers individuals to manage their heart health proactively. 
+
+The integration of the ESP8266 Wi-Fi module elevates the project from a localized tool to a modern telemedicine device, allowing for real-time remote monitoring, data logging, and easy integration with mobile dashboards. This is particularly critical in resource-limited settings or for eldercare, where continuous, remote observation can help predict and reduce the risk of severe cardiovascular events.
+
+**Future Enhancements:** Future iterations of this project could focus on hardware miniaturization by designing a custom Printed Circuit Board (PCB) to replace jumper wires, integrating a rechargeable Li-Po battery management system (BMS) for true portability, and implementing machine learning algorithms on the cloud side for automated anomaly detection in the ECG waveforms.
