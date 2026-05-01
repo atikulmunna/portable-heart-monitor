@@ -1,21 +1,7 @@
-<!-- ## Abstract
 
-A portable cardiac monitoring system is crucial in daily life due to the rising prevalence of cardiovascular diseases (CVDs), which are the leading cause of death worldwide. Early detection and consistent monitoring of cardiac health can significantly reduce the risk of severe complications such as heart attacks or strokes. Traditional hospital-based monitoring systems are often inaccessible in remote or underprivileged areas and inconvenient for continuous, long-term use. A portable system bridges this gap by offering real-time tracking of vital parameters like ECG, heart rate, and oxygen levels, empowering individuals to monitor their health from the comfort of their homes. This not only enhances patient outcomes through timely intervention but also reduces the burden on healthcare facilities. This project presents the design and implementation of a portable cardiac monitoring system using the STM32F103C8T6 microcontroller. The system integrates an AD8232 ECG sensor, MAX30102 Heart-Rate/Spo2 sensor to monitor and display real-time ECG signals, Heart-Rate/Oxygen Level on an OLED display. This project report discusses the hardware configuration, software development, and challenges encountered, providing a scalable and cost-effective solution for real-time cardiac monitoring. <br/>
-**Keywords:** STM32F103C8T6, AD8232, MAX30102, OLED I2C
-
-## Introduction
-### Problem Statement
-Cardiovascular diseases (CVDs) are the leading cause of death globally, responsible for millions of deaths each year. Early diagnosis and continuous monitoring are key to improving patient outcomes, reducing the risk of severe events such as heart attacks, strokes, and sudden cardiac arrests. However, current cardiac monitoring solutions, such as hospital-based equipment, are often expensive, bulky, and require specialized medical facilities and personnel. Furthermore, they are not easily accessible in rural or underserved areas where healthcare infrastructure may be limited. The lack of affordable, portable, and easy-to-use cardiac monitoring systems exacerbates this challenge, preventing individuals from effectively managing their heart health in everyday life. As a result, there is a growing need for an affordable, efficient, and portable solution that enables continuous, real-time monitoring of vital cardiac parameters outside of traditional medical settings. 
-
-### Objective
-The objective of this project is to design and implement a **Portable Cardiac Monitoring System** that can continuously monitor and display vital cardiac parameters, specifically the **ECG signals**, **heart rate**, and **SpO2 levels**, in real time. By integrating affordable, compact, and widely available components such as the **STM32F103C8 microcontroller**, **MAX30102 sensor**, and **AD8232 ECG module**, this system offers a scalable, cost-effective solution for personal health monitoring. The system will provide an intuitive user interface, displaying ECG graphs and vital signs on a mobile application, allowing individuals to track their cardiac health without the need for specialized medical equipment. 
-
-### Scope 
-This portable cardiac monitoring system is designed primarily for **home-based health monitoring** and **fitness tracking**, making it suitable for individuals looking to track their cardiovascular health in a non-clinical environment. It can be used by people with pre-existing heart conditions, fitness enthusiasts, or individuals at risk of cardiovascular disease, helping them stay proactive about their health. The system provides an accessible middle ground between **clinical-grade devices**, which are often costly and complex, and basic **consumer-grade health gadgets**, which may lack the necessary diagnostic accuracy. Moreover, this system offers a more affordable, real-time, and continuous solution for heart health management, addressing the limitations of traditional systems and expanding access to quality cardiac care.-->
 
 # IoT-Based Portable Cardiac Monitoring System
 
-## System Overview
 This project is an advanced, IoT-enabled Portable Cardiac Monitoring System. Utilizing a dual-microcontroller architecture, it seamlessly captures, processes, and streams real-time biometric data. Users can interact with the system locally via a physical keypad and an OLED screen, or monitor their health remotely through a live cloud dashboard.
 
 ### Components Used
@@ -38,12 +24,11 @@ This project is an advanced, IoT-enabled Portable Cardiac Monitoring System. Uti
 ## IoT Cloud Dashboard (Ubidots)
 The system streams data over Wi-Fi directly to a Ubidots cloud dashboard, enabling remote monitoring from anywhere in the world. The dashboard features visual widgets including a live-scrolling ECG chart, a BPM gauge, and a SpO2 indicator.
 
-*(Add your mobile app or web dashboard screenshot below)*
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/67aff9f8-1516-43fb-8f7d-83141ea76629" width="400" alt="Ubidots Mobile Dashboard Placeholder">
+</p>
+<p align="center"><i>Figure 1: Live Ubidots Health Monitoring Dashboard</i></p>
 
-![Ubidots Mobile Dashboard Placeholder](Put_Your_Image_Link_Here) \
-*<p align="center">Figure 1: Live Ubidots Health Monitoring Dashboard</p>*
-
----
 
 ## Pinout Diagram and Explanation
 
@@ -107,8 +92,6 @@ The system operates by delegating tasks. The **STM32F1** acts as the master sens
 
 ---
 
-## Results Analysis and Discussion
-
 ### Result Analysis
 *   **ECG Data:** Successfully visualized real-time ECG waveforms locally on the OLED and remotely via the Ubidots web/mobile interface.
     *   *Challenges:* Initial noise in the analog signal was mitigated through appropriate hardware filtering, while rendering latency was solved by adjusting the refresh rate logic so as not to block the main loop.
@@ -116,17 +99,3 @@ The system operates by delegating tasks. The **STM32F1** acts as the master sens
     *   *Challenges:* Dealing with ambient light interference and finger movement artifacts. This required establishing a dynamic threshold algorithm that constantly adjusts to the baseline IR light values before calculating the beats-per-minute.
 *   **IoT Synchronization:** Successfully passed data reliably between two microcontrollers.
     *   *Challenges:* Preventing buffer overflows and serial desynchronization. Solved by standardizing the baud rate (115200), using strict JSON formatting, and implementing a non-blocking 3-second delay for cloud uploads.
-
-### Discussion
-The design and implementation of this system demonstrated a highly practical solution for continuous cardiac monitoring. By upgrading from a standalone device to a dual-MCU IoT architecture, the system overcomes the localized limitations of traditional monitors. The **STM32F103C8** proved highly capable of handling the strict timing requirements of the I2C sensors and OLED rendering, while offloading the heavy Wi-Fi protocols to the **ESP8266** ensured the system never froze or dropped frames while connecting to the internet. 
-
-Challenges encountered during development included minimizing electrical noise across the sensors and compressing the required codebase to fit within the STM32's memory constraints. These were mitigated using advanced IDE optimization flags, digital filtering techniques, and careful management of global variables.
-
----
-
-## Conclusion
-This project successfully demonstrates the feasibility of an affordable, portable, and cloud-connected Cardiac Monitoring System. By addressing the limitations of traditional hospital-based equipment—such as bulkiness, high costs, and lack of remote accessibility—this solution empowers individuals to manage their heart health proactively. 
-
-The integration of the ESP8266 Wi-Fi module elevates the project from a localized tool to a modern telemedicine device, allowing for real-time remote monitoring, data logging, and easy integration with mobile dashboards. This is particularly critical in resource-limited settings or for eldercare, where continuous, remote observation can help predict and reduce the risk of severe cardiovascular events.
-
-**Future Enhancements:** Future iterations of this project could focus on hardware miniaturization by designing a custom Printed Circuit Board (PCB) to replace jumper wires, integrating a rechargeable Li-Po battery management system (BMS) for true portability, and implementing machine learning algorithms on the cloud side for automated anomaly detection in the ECG waveforms.
